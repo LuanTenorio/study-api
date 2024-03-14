@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String   
+  email     String   @unique
+  password  String   
+  createdAt DateTime @default(now())
+  tasks     Task[]
+  words     Word[]
+}
+
+model Tag {
+  id           Int      @id @default(autoincrement())
+  title        String   
+  createdAt    DateTime @default(now())
+  TaskTags     TaskTag[]
+  SummaryTags     SummaryTag[]
+  RevisionTags     RevisionTag[]
+  FlashCardTags     FlashCardTag[]
+}
+
+model Task {
+  id           Int      @id @default(autoincrement())
+  checked      Boolean  
+  title        String   
+  description  String   @db.Text
+  dataFinal    DateTime
+  createdAt    DateTime @default(now())
+  user         User @relation(fields: [userId], references: [id])
+  userId       Int
+  origin       TaskOrigin 
+  TaskTags     TaskTag[]
+}
+
+model TaskTag {
+  task       Task     @relation(fields: [taskId], references: [id])
+  taskId     Int 
+  tag   Tag @relation(fields: [tagId], references: [id])
+  tagId Int 
+  @@id([taskId, tagId])
+}
+
+model Word {
+  id           Int      @id @default(autoincrement())
+  word         String   
+  description  String   @db.Text
+  createdAt    DateTime @default(now())
+  user         User @relation(fields: [userId], references: [id])
+  userId       Int
+  usages       WordUsage[]
+}
+
+model WordUsage {
+  id           Int      @id @default(autoincrement())
+  usage        String   @db.Text
+  createdAt    DateTime @default(now())
+  word         Word @relation(fields: [wordId], references: [id])
+  wordId       Int
+}
+
+enum TaskOrigin {
+  ENGLISH
+  ENEM
+}
+
+model Summary {
+  id           Int      @id @default(autoincrement())
+  title        String   
+  summary      String   @db.Text
+  createdAt    DateTime @default(now())
+  SummaryTags     SummaryTag[]
+}
+
+model SummaryTag {
+  summary       Summary     @relation(fields: [summaryId], references: [id])
+  summaryId     Int 
+  tag   Tag @relation(fields: [tagId], references: [id])
+  tagId Int 
+  @@id([summaryId, tagId])
+}
+
+model Revision {
+  id            Int      @id @default(autoincrement())
+  title         String   
+  desctiption   String   @db.Text
+  lastRevision  DateTime @default(now())
+  reviewQuantities Int @db.SmallInt
+  createdAt     DateTime @default(now())
+  RevisionTags  RevisionTag[]
+}
+
+model RevisionTag {
+  revision       Revision     @relation(fields: [revisionId], references: [id])
+  revisionId     Int 
+  tag   Tag @relation(fields: [tagId], references: [id])
+  tagId Int 
+  @@id([revisionId, tagId])
+}
+
+model FlashCard {
+  id            Int      @id @default(autoincrement())
+  title         String   
+  desctiption   String   @db.Text
+  createdAt     DateTime @default(now())
+  FlashCardTags  FlashCardTag[]
+  FlashCardTests  FlashCardTest[]
+}
+
+model FlashCardTest {
+  id           Int      @id @default(autoincrement())
+  duration     Int      @db.SmallInt
+  correct      Boolean
+  createdAt    DateTime @default(now())
+  flashCard     FlashCard @relation(fields: [flashCardId], references: [id])
+  flashCardId   Int
+}
+
+model FlashCardTag {
+  flashCard       FlashCard     @relation(fields: [flashCardId], references: [id])
+  flashCardId     Int 
+  tag   Tag @relation(fields: [tagId], references: [id])
+  tagId Int 
+  @@id([flashCardId, tagId])
+}
