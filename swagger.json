@@ -1,0 +1,236 @@
+{
+    "openapi": "3.0.2",
+    "info":{
+        "title": "Study",
+        "description": "",
+        "version": "1.0"
+    },
+    "tags": [
+        {
+            "name": "Summary",
+            "description": ""
+        }
+    ],
+    "paths": {
+        "/summarys": {
+            "post": {
+                "summary": "Create a new summary",
+                "tags": ["Summary"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SummaryCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Summary created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CompleteSummary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/summarys/{id}": {
+            "get": {
+                "summary": "find summary by id",
+                "tags": ["Summary"],
+                "parameters": [{
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Summary",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Summary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Summary not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Update summary by id",
+                "tags": ["Summary"],
+                "parameters": [{
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SummaryUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated summary",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Summary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Summary not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete summary by id",
+                "tags": ["Summary"],
+                "parameters": [{
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "204": {
+                        "description": "Summary deleted"
+                    },
+                    "404": {
+                        "description": "Summary not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ErrorResponse": {
+                "type": "object",
+                "required": ["statusCode", "message", "error", "timestamp", "path"],
+                "properties": {
+                    "statusCode": {
+                        "type": "integer",
+                        "title": "Status Code",
+                        "description": "HTTP error status code"
+                    },
+                    "message": {
+                        "type": "string",
+                        "title": "Message",
+                        "description": "Error description"
+                    },
+                    "error": {
+                        "type": "string",
+                        "title": "Error",
+                        "description": "HTTP status code name"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "title": "Timestamp",
+                        "description": "Date and time the error occurred",
+                        "format": "dateTime"
+                    },
+                    "path": {
+                        "type": "string",
+                        "title": "Path",
+                        "description": "URL path"
+                    }
+                }
+            },
+            "CompleteSummary": {
+                "type": "object",
+                "allOf": [ {"$ref": "#/components/schemas/Summary"} ]
+            },
+            "Summary": {
+                "type": "object",
+                "required": ["id", "name", "color", "companyId", "createdAt"],
+                "properties": {
+                    "id": {
+                        "title": "Summary id",
+                        "type": "string"
+                    },
+                    "title": {
+                        "title": "Title",
+                        "description": "Summary name",
+                        "type": "string",
+                        "example": "World War II"
+                    },
+                    "summary": {
+                        "title": "Summary",
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "title": "Date the record was created",
+                        "type": "string",
+                        "format": "datetime"
+                    }
+                }
+            },
+            "SummaryCreate": {
+                "type": "object",
+                "required": ["title"],
+                "allOf": [ {"$ref": "#/components/schemas/SummaryUpdate"} ]
+            },
+            "SummaryUpdate": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "title": "Title",
+                        "description": "Summary name",
+                        "type": "string",
+                        "example": "World War II"
+                    },
+                    "summary": {
+                        "title": "Summary",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
